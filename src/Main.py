@@ -350,10 +350,10 @@ def main():
     input_shape = x_train.shape[1:]
     
     print("Train")
-    #train(model, batch_size, epochs, x_train, y_train, x_test, y_test)
+    train(model, batch_size, epochs, x_train, y_train, x_test, y_test)
     print("End Train")
     #print("Test")
-    test(x_test)
+    #test(x_test)
     #print("End Test")
 if __name__ == '__main__':
     main()
