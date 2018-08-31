@@ -26,7 +26,7 @@ from google.colab import auth
 from oauth2client.client import GoogleCredentials
 
 def downloadDatasetFromDrive(datasetId, download_dir):
-    #auth.authenticate_user()
+    auth.authenticate_user()
     gauth = GoogleAuth()
     gauth.credentials = GoogleCredentials.get_application_default()
     drive = GoogleDrive(gauth)
