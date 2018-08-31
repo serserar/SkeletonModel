@@ -20,6 +20,39 @@ import numpy as np
 import os
 from os import path
 import matplotlib.pyplot as plt
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
+from google.colab import auth
+from oauth2client.client import GoogleCredentials
+
+def downloadDatasetFromDrive(datasetId, download_dir):
+    #auth.authenticate_user()
+    gauth = GoogleAuth()
+    gauth.credentials = GoogleCredentials.get_application_default()
+    drive = GoogleDrive(gauth)
+    downloaded = drive.CreateFile({'id': datasetId})
+    downloaded.GetContentFile(download_dir)
+
+def download_tracking_file_by_id(file_id, download_dir):
+    gauth = GoogleAuth(settings_file='../settings.yaml')
+    # Try to load saved client credentials
+    gauth.LoadCredentialsFile("../credentials.json")
+    if gauth.credentials is None:
+        # Authenticate if they're not there
+        gauth.LocalWebserverAuth()
+    elif gauth.access_token_expired:
+        # Refresh them if expired
+        gauth.Refresh()
+    else:
+        # Initialize the saved creds
+        gauth.Authorize()
+    # Save the current credentials to a file
+    gauth.SaveCredentialsFile("../credentials.json")
+
+    drive = GoogleDrive(gauth)
+
+    file6 = drive.CreateFile({'id': file_id})
+    file6.GetContentFile(download_dir+'mapmob.zip')
 
 def preprocessImg(image_path):
     return Image.open(image_path)
@@ -334,13 +367,15 @@ def test(x_test):
         ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
     plt.show()
-    
+
 def main():
     
     print("Init")
     batch_size = 25
 
     epochs = 25
+    #https://drive.google.com/open?id=1N0PHqTlM7zWkg_q8LizpRCIJQLft1bIZ
+    downloadDatasetFromDrive("1N0PHqTlM7zWkg_q8LizpRCIJQLft1bIZ","../dataset/skeleton_dataset.tar.gz")
     
     input_shape = (240, 320, 1)
     print("Create model")
