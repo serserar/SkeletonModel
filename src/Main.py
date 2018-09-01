@@ -23,6 +23,9 @@ import matplotlib.pyplot as plt
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from oauth2client.client import GoogleCredentials
+from DataGenerator import DataGenerator
+import uuid
+import itertools
 
 def downloadDatasetFromDrive(datasetId, download_dir):
     gauth = GoogleAuth()
@@ -93,11 +96,55 @@ def loadDataSet(datasetPath):
     y_train = y_train.astype('float32') / 255.
     x_test = x_test.astype('float32') / 255.
     y_test = y_test.astype('float32') / 255.
-    #x_train = np.reshape(x_train, (len(x_train), 28, 28, 1))  # adapt this if using `channels_first` image data format
-    #x_test = np.reshape(x_test, (len(x_test), 28, 28, 1))  # adapt this if using `channels_first` image data format
-    return (x_train, y_train), (x_test, y_test)
-    #x_train = np.empty((num_train_samples, 3, 320, 240), dtype='uint8')
-    #y_train = np.empty((num_train_samples,), dtype='uint8')    
+    return (x_train, y_train), (x_test, y_test)  
+
+def loadDataSetList(datasetPath):
+    if os.path.exists(datasetPath):
+        dataset_dir = os.path.join(os.path.expanduser('~'), '.keras/datasets/skeleton')
+        keras.utils.data_utils._extract_archive(datasetPath, dataset_dir, archive_format='auto')
+    train_model=os.path.join(dataset_dir,"train_model")
+    train_skeleton=os.path.join(dataset_dir,"train_skeleton")
+    x_train=[]
+    y_train=[]
+    if os.path.exists(train_model):
+        with open(train_model) as f:
+            all_x_img_paths = f.read().splitlines()
+            for img_path in all_x_img_paths:
+                x_train.append(img_path)
+    if os.path.exists(train_skeleton):
+        with open(train_skeleton) as f:
+            all_y_img_paths = f.read().splitlines()
+            for img_path in all_y_img_paths:
+                y_train.append(img_path)
+    print("Xtrain size : " + str(len(x_train)))
+    print("Ytrain size : " + str(len(y_train)))
+    x_train, x_test, y_train, y_test = train_test_split(x_train, y_train, shuffle=True, test_size=0.20)
+    
+    return (x_train, y_train), (x_test, y_test)  
+
+def samp(x_train, x_test, y_train, y_test):
+    training={}
+    
+    training_labels={}
+    
+    for x,y in itertools.izip(x_train,y_train) :
+        id = str(uuid.uuid4())
+        training[id]=x
+        training_labels[id]=y
+        
+    validation={}
+    validation_labels={}    
+    for x,y in itertools.izip(x_test,y_test) :
+        id = str(uuid.uuid4())
+        validation[id]=x
+        validation_labels[id]=y
+        
+    tlabel=list(training.keys())[0]
+    vlabel=list(validation.keys())[0]      
+    print(training[tlabel])
+    print(training_labels[tlabel])
+    print(validation[vlabel])
+    print(validation_labels[vlabel])
 
 ## DEF A BLOCK CONV + BN + GN + MAXPOOL
 def CBGN(model,filters,ishape=0):
@@ -329,7 +376,6 @@ def train(model, batch_size, epochs, x_train, y_train, x_test, y_test):
     #          optimizer=opt,
     #          metrics=['accuracy'])
 
-
     ## TRAINING
     model.fit(x_train, y_train,
           batch_size=batch_size,
@@ -343,8 +389,29 @@ def train(model, batch_size, epochs, x_train, y_train, x_test, y_test):
     scores = model.evaluate(x_test, y_test, verbose=1)
     print('Test loss:', scores[0])
     print('Test accuracy:', scores[1])
+
+def trainDataGenerator(model, batch_size, epochs, x_train, y_train, x_test, y_test):
     
-    #decoded_imgs = model.predict(x_test)
+    # Parameters
+    params = {'dim': (240,320,1),
+          'batch_size': 64,
+          'n_classes': 6,
+          'n_channels': 1,
+          'shuffle': True}
+    dataSetPath = os.path.join(os.path.expanduser('~'), '.keras/datasets/skeleton')
+    # Generators
+    training_generator = DataGenerator(dataSetPath, x_train, y_train, **params)
+    validation_generator = DataGenerator(dataSetPath, x_test, y_test, **params)
+
+    ## TRAINING
+    model.fit_generator(generator=training_generator,
+          validation_data=validation_generator,
+          epochs=epochs, 
+          verbose=1,
+          shuffle=True,
+          callbacks=[TensorBoard(log_dir='/tmp/skeletonmodel',histogram_freq=0,  write_graph=True, write_images=False)])
+    
+    model.save('../test/skeletonmodel.h5')
         
 def test(x_test):    
     model = load_model('../test/skeletonmodel.h5')
@@ -379,11 +446,10 @@ def main():
     print("Create model")
     model = skeleton_model(input_shape)
     print("Load dataSet")
-    (x_train, y_train), (x_test, y_test) = loadDataSet("../dataset/skeleton_dataset.tar.gz")
-    input_shape = x_train.shape[1:]
+    (x_train, y_train), (x_test, y_test) = loadDataSetList("../dataset/skeleton_dataset_large.tar.gz")
     
     print("Train")
-    train(model, batch_size, epochs, x_train, y_train, x_test, y_test)
+    trainDataGenerator(model, batch_size, epochs, x_train, y_train, x_test, y_test)
     print("End Train")
     #print("Test")
     #test(x_test)
