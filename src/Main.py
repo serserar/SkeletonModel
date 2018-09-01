@@ -446,7 +446,7 @@ def main():
     print("Create model")
     model = skeleton_model(input_shape)
     print("Load dataSet")
-    (x_train, y_train), (x_test, y_test) = loadDataSetList("../dataset/skeleton_dataset_large.tar.gz")
+    (x_train, y_train), (x_test, y_test) = loadDataSetList("../dataset/skeleton_dataset.tar.gz")
     
     print("Train")
     trainDataGenerator(model, batch_size, epochs, x_train, y_train, x_test, y_test)
