@@ -439,8 +439,8 @@ def main():
     batch_size = 25
 
     epochs = 25
-    #https://drive.google.com/open?id=1N0PHqTlM7zWkg_q8LizpRCIJQLft1bIZ
-    downloadDatasetFromDrive("1N0PHqTlM7zWkg_q8LizpRCIJQLft1bIZ","../dataset/skeleton_dataset.tar.gz")
+    #https://drive.google.com/open?id=1usvnmumTinLgaRIDGRJHpqNq86GGc1uF
+    downloadDatasetFromDrive("1usvnmumTinLgaRIDGRJHpqNq86GGc1uF","../dataset/skeleton_dataset.tar.gz")
     
     input_shape = (240, 320, 1)
     print("Create model")
