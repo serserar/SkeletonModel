@@ -438,7 +438,7 @@ def main():
     print("Init")
     batch_size = 25
 
-    epochs = 25
+    epochs = 100
     #https://drive.google.com/open?id=1usvnmumTinLgaRIDGRJHpqNq86GGc1uF
     downloadDatasetFromDrive("1usvnmumTinLgaRIDGRJHpqNq86GGc1uF","../dataset/skeleton_dataset.tar.gz")
     
