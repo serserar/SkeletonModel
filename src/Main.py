@@ -188,6 +188,24 @@ def skeleton_model(input_shape):
     model.summary()
     return model;
 
+def skeleton_model2(input_shape):
+    ## DEF NN TOPOLOGY  
+    model = Sequential()
+
+    model=buildEncoder(model,32, input_shape)
+    model=buildEncoder(model,16)
+    model=buildEncoder(model,8)
+    model=buildEncoder(model,8)
+    model=buildDecoder(model,8)
+    model=buildDecoder(model,8)
+    model=buildDecoder(model,16)
+    model=buildDecoder(model,32)
+    model.add(Conv2D(1, (3, 3), activation='sigmoid', padding='same'))
+    model.compile(optimizer='adadelta', loss='binary_crossentropy')
+    model.summary()
+    return model;
+
+
 def create_model(input_shape):
     ## DEF NN TOPOLOGY  
     model = Sequential()
@@ -438,13 +456,13 @@ def main():
     print("Init")
     batch_size = 25
 
-    epochs = 100
+    epochs = 50
     #https://drive.google.com/open?id=1usvnmumTinLgaRIDGRJHpqNq86GGc1uF
     downloadDatasetFromDrive("1usvnmumTinLgaRIDGRJHpqNq86GGc1uF","../dataset/skeleton_dataset.tar.gz")
     
     input_shape = (240, 320, 1)
     print("Create model")
-    model = skeleton_model(input_shape)
+    model = skeleton_model2(input_shape)
     print("Load dataSet")
     (x_train, y_train), (x_test, y_test) = loadDataSetList("../dataset/skeleton_dataset.tar.gz")
     
