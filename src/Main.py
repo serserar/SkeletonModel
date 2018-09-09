@@ -389,7 +389,9 @@ def train(model, batch_size, epochs, x_train, y_train, x_test, y_test):
           shuffle=True,
           callbacks=[TensorBoard(log_dir='/tmp/skeletonmodel',histogram_freq=0,  write_graph=True, write_images=False)])
     
-    model.save('../test/skeletonmodel.h5')
+    model_path = '../test/skeletonmodel.h5'
+    model.save(model_path)
+    uploadFileToDrive(model_path)
     ## TEST
     scores = model.evaluate(x_test, y_test, verbose=1)
     print('Test loss:', scores[0])
@@ -416,7 +418,9 @@ def trainDataGenerator(model, batch_size, epochs, x_train, y_train, x_test, y_te
           shuffle=True,
           callbacks=[TensorBoard(log_dir='/tmp/skeletonmodel',histogram_freq=0,  write_graph=True, write_images=False)])
     
-    model.save('../test/skeletonmodel.h5')
+    model_path = '../test/skeletonmodel.h5'
+    model.save(model_path)
+    uploadFileToDrive(model_path)
         
 def test(x_test):    
     model = load_model('../test/skeletonmodel.h5')
