@@ -34,26 +34,13 @@ def downloadDatasetFromDrive(datasetId, download_dir):
     downloaded = drive.CreateFile({'id': datasetId})
     downloaded.GetContentFile(download_dir)
 
-def download_tracking_file_by_id(file_id, download_dir):
-    gauth = GoogleAuth(settings_file='../settings.yaml')
-    # Try to load saved client credentials
-    gauth.LoadCredentialsFile("../credentials.json")
-    if gauth.credentials is None:
-        # Authenticate if they're not there
-        gauth.LocalWebserverAuth()
-    elif gauth.access_token_expired:
-        # Refresh them if expired
-        gauth.Refresh()
-    else:
-        # Initialize the saved creds
-        gauth.Authorize()
-    # Save the current credentials to a file
-    gauth.SaveCredentialsFile("../credentials.json")
-
+def uploadFileToDrive(filePath):
+    gauth = GoogleAuth()
+    gauth.credentials = GoogleCredentials.get_application_default()
     drive = GoogleDrive(gauth)
-
-    file6 = drive.CreateFile({'id': file_id})
-    file6.GetContentFile(download_dir+'mapmob.zip')
+    file1 = drive.CreateFile()
+    file1.SetContentFile(filePath)
+    file1.Upload()
 
 def preprocessImg(image_path):
     return Image.open(image_path)
