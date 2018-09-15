@@ -12,7 +12,7 @@ from keras.layers import GaussianNoise as GN
 from keras.layers.convolutional import Convolution2D, MaxPooling2D, UpSampling2D
 from keras.layers.normalization import BatchNormalization
 from keras.optimizers import SGD
-from keras.preprocessing.image import img_to_array
+from keras.preprocessing.image import img_to_array,array_to_img
 from keras.callbacks import TensorBoard
 from PIL import Image
 from sklearn.model_selection import train_test_split
@@ -76,8 +76,8 @@ def getXYTrain(dataSetPath, train_model):
     return XYtrain
 
 def loadDataSet(datasetPath):
+    dataset_dir = os.path.join(os.path.expanduser('~'), '.keras/datasets/skeleton')
     if os.path.exists(datasetPath):
-        dataset_dir = os.path.join(os.path.expanduser('~'), '.keras/datasets/skeleton')
         keras.utils.data_utils._extract_archive(datasetPath, dataset_dir, archive_format='auto')
     train_model=os.path.join(dataset_dir,"train_model")
     train_skeleton=os.path.join(dataset_dir,"train_skeleton")
@@ -101,8 +101,9 @@ def loadDataSet(datasetPath):
 
         
 def test(x_test, y_test):    
-    model = load_model('../test/skeletonmodel.h5')
+    model = load_model('../test/skeletonmodel_final_2.h5')
     decoded_imgs = model.predict(x_test)
+    saveImages(decoded_imgs, "../predicted")
     n=10
     plt.figure(figsize=(20, 4))
     for i in range(n):
@@ -121,6 +122,11 @@ def test(x_test, y_test):
     plt.show()
 
 def saveImages(predicted_images, destinationPath):
+    for image_array in predicted_images:
+        img = array_to_img(image_array)
+        id = str(uuid.uuid4())
+        imgpath = os.path.join(destinationPath, id + ".ppm")
+        img.save(imgpath,'ppm')
     return
 
 def main():
@@ -130,7 +136,7 @@ def main():
     (x_train, y_train), (x_test, y_test) = loadDataSet("../dataset/skeleton_dataset_test.tar.gz")
 
     print("Test")
-    test(x_test)
+    test(x_test, y_test)
     print("End Test")
 if __name__ == '__main__':
     main()
