@@ -252,7 +252,7 @@ def skeleton_model3(input_shape):
 def skeleton_model3d(input_shape):
     ## DEF NN TOPOLOGY  
     model = Sequential()
-    model.add(Reshape((256, 256, 256, 1), input_shape=(256, 256, 256)))
+    model.add(Reshape((64, 64, 64, 1), input_shape=(64, 64, 64)))
     model=buildEncoder3d(model,64)
     model=buildEncoder3d(model,32)
     model=buildEncoder3d(model,16)
@@ -264,7 +264,7 @@ def skeleton_model3d(input_shape):
     model=buildDecoder3d(model,32)
     model=buildDecoder3d(model,64)
     model.add(Conv3D(1, (3, 3, 3), activation='sigmoid', padding='same'))
-    model.add(Reshape((256, 256, 256), input_shape=(256, 256, 256, 1)))
+    model.add(Reshape((64, 64, 64), input_shape=(64, 64, 64, 1)))
     model.compile(optimizer='adadelta', loss='binary_crossentropy')
     model.summary()
     return model;
@@ -501,8 +501,8 @@ def trainDataGenerator(model, batch_size, epochs, x_train, y_train, x_test, y_te
 def trainDataGenerator3d(model, batch_size, epochs, x_train, y_train, x_test, y_test):
     
     # Parameters
-    params = {'dim': (256,256, 256, 1),
-          'batch_size': 64,
+    params = {'dim': (64, 64, 64, 1),
+          'batch_size': 32,
           'n_classes': 6,
           'n_channels': 1,
           'shuffle': True}
@@ -552,9 +552,9 @@ def main():
     input_shape = (240, 320, 1)
     
     if is3d:
-        #https://drive.google.com/open?id=15J9LqafqljNKn_Zzge4ugGpaXuMTIQ9h
-        input_shape = (256, 256, 256, 1)
-        downloadDatasetFromDrive("15J9LqafqljNKn_Zzge4ugGpaXuMTIQ9h","../dataset/skeleton_3ddataset.tar.gz")
+        #https://drive.google.com/open?id=14dGkCuAX57TyWiHP9lWWEi2LiwxUBVBe
+        input_shape = (64, 64, 64, 1)
+        downloadDatasetFromDrive("14dGkCuAX57TyWiHP9lWWEi2LiwxUBVBe","../dataset/skeleton_3ddataset.tar.gz")
         print("Create model 3d")
         model = skeleton_model3d(input_shape)
         print("Load dataSet")
