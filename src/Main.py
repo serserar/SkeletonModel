@@ -502,7 +502,7 @@ def trainDataGenerator3d(model, batch_size, epochs, x_train, y_train, x_test, y_
     
     # Parameters
     params = {'dim': (64, 64, 64, 1),
-          'batch_size': 36,
+          'batch_size': 32,
           'n_classes': 6,
           'n_channels': 1,
           'shuffle': True}
@@ -548,7 +548,7 @@ def main():
     print("Init")
     batch_size = 25
     is3d=True
-    epochs = 50
+    epochs = 25
     input_shape = (240, 320, 1)
     
     if is3d:
