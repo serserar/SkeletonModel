@@ -546,15 +546,15 @@ def test(x_test):
 def main():
     
     print("Init")
-    batch_size = 25
+    batch_size = 32
     is3d=True
-    epochs = 25
+    epochs = 5
     input_shape = (240, 320, 1)
     
     if is3d:
-        #https://drive.google.com/open?id=14dGkCuAX57TyWiHP9lWWEi2LiwxUBVBe
+        #https://drive.google.com/open?id=1rCZZJvQMwQf8JMSR_NXRqZGqVP-Y3P-I
         input_shape = (64, 64, 64, 1)
-        downloadDatasetFromDrive("14dGkCuAX57TyWiHP9lWWEi2LiwxUBVBe","../dataset/skeleton_3ddataset.tar.gz")
+        downloadDatasetFromDrive("1rCZZJvQMwQf8JMSR_NXRqZGqVP-Y3P-I","../dataset/skeleton_3ddataset.tar.gz")
         print("Create model 3d")
         model = skeleton_model3d(input_shape)
         print("Load dataSet")
