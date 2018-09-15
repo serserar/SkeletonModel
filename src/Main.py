@@ -252,7 +252,7 @@ def skeleton_model3(input_shape):
 def skeleton_model3d(input_shape):
     ## DEF NN TOPOLOGY  
     model = Sequential()
-    model.add(Reshape((256, 256, 256, 1), input_shape))
+    model.add(Reshape(input_shape, (256, 256, 256)))
     model=buildEncoder3d(model,64, input_shape)
     model=buildEncoder3d(model,32)
     model=buildEncoder3d(model,16)
@@ -264,7 +264,7 @@ def skeleton_model3d(input_shape):
     model=buildDecoder3d(model,32)
     model=buildDecoder3d(model,64)
     model.add(Conv3D(1, (3, 3, 3), activation='sigmoid', padding='same'))
-    model.add(Reshape(input_shape, (256, 256, 256, 1)))
+    model.add(Reshape((256, 256, 256), input_shape))
     model.compile(optimizer='adadelta', loss='binary_crossentropy')
     model.summary()
     return model;
