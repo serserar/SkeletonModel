@@ -500,7 +500,7 @@ def trainDataGenerator(model, batch_size, epochs, x_train, y_train, x_test, y_te
 def trainDataGenerator3d(model, batch_size, epochs, x_train, y_train, x_test, y_test):
     
     # Parameters
-    params = {'dim': (256,256,1),
+    params = {'dim': (256,256, 256, 1),
           'batch_size': 64,
           'n_classes': 6,
           'n_channels': 1,
@@ -549,6 +549,7 @@ def main():
     is3d=True
     epochs = 50
     input_shape = (240, 320, 1)
+    
     if is3d:
         #https://drive.google.com/open?id=15J9LqafqljNKn_Zzge4ugGpaXuMTIQ9h
         input_shape = (256, 256, 256, 1)

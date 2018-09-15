@@ -59,8 +59,9 @@ class DataGenerator3d(keras.utils.Sequence):
             voxel_path=os.path.join(self.dataSetPath, id)
             if os.path.exists(voxel_path):
                 try:
-                    voxel = np.int32(binvox_rw.read_as_3d_array(voxel_path).data)
-                    voxels.append(voxel)
+                    with open(voxel_path, 'rb') as voxelFile:
+                        voxel = np.int32(binvox_rw.read_as_3d_array(voxelFile).data)
+                        voxels.append(voxel)
                 except:
                     print(voxel_path)
             else:
@@ -72,8 +73,9 @@ class DataGenerator3d(keras.utils.Sequence):
             voxel_path=os.path.join(self.dataSetPath, id)
             if os.path.exists(voxel_path):
                 try:
-                    yvoxel = np.int32(binvox_rw.read_as_3d_array(voxel_path).data)
-                    yvoxels.append(yvoxel)
+                    with open(voxel_path, 'rb') as voxelFile:
+                        yvoxel = np.int32(binvox_rw.read_as_3d_array(voxelFile).data)
+                        yvoxels.append(yvoxel)
                 except:
                     print(voxel_path)
             else:
