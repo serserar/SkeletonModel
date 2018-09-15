@@ -6,10 +6,10 @@ from keras.datasets import cifar10
 from keras.models import Sequential
 from keras.models import load_model
 from keras.layers import Dense, Dropout, Activation, Flatten, Reshape, Permute
-from keras.layers import Conv2D, MaxPooling2D
+from keras.layers import Conv2D, MaxPooling2D, Conv3D, MaxPooling3D
 from keras.layers.normalization import BatchNormalization as BN
 from keras.layers import GaussianNoise as GN
-from keras.layers.convolutional import Convolution2D, MaxPooling2D, UpSampling2D
+from keras.layers.convolutional import Convolution2D, MaxPooling2D, UpSampling2D, UpSampling3D
 from keras.layers.normalization import BatchNormalization
 from keras.optimizers import SGD
 from keras.preprocessing.image import img_to_array
@@ -24,6 +24,7 @@ from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from oauth2client.client import GoogleCredentials
 from DataGenerator import DataGenerator
+from DataGenerator3d import DataGenerator3d
 import uuid
 import itertools
 
@@ -85,9 +86,33 @@ def loadDataSet(datasetPath):
     y_test = y_test.astype('float32') / 255.
     return (x_train, y_train), (x_test, y_test)  
 
-def loadDataSetList(datasetPath):
+def loadDataSetList2d(datasetPath):
     if os.path.exists(datasetPath):
         dataset_dir = os.path.join(os.path.expanduser('~'), '.keras/datasets/skeleton')
+        keras.utils.data_utils._extract_archive(datasetPath, dataset_dir, archive_format='auto')
+    train_model=os.path.join(dataset_dir,"train_model")
+    train_skeleton=os.path.join(dataset_dir,"train_skeleton")
+    x_train=[]
+    y_train=[]
+    if os.path.exists(train_model):
+        with open(train_model) as f:
+            all_x_img_paths = f.read().splitlines()
+            for img_path in all_x_img_paths:
+                x_train.append(img_path)
+    if os.path.exists(train_skeleton):
+        with open(train_skeleton) as f:
+            all_y_img_paths = f.read().splitlines()
+            for img_path in all_y_img_paths:
+                y_train.append(img_path)
+    print("Xtrain size : " + str(len(x_train)))
+    print("Ytrain size : " + str(len(y_train)))
+    x_train, x_test, y_train, y_test = train_test_split(x_train, y_train, shuffle=True, test_size=0.20)
+    
+    return (x_train, y_train), (x_test, y_test)  
+
+def loadDataSetList3d(datasetPath):
+    if os.path.exists(datasetPath):
+        dataset_dir = os.path.join(os.path.expanduser('~'), '.keras/datasets/skeleton3d')
         keras.utils.data_utils._extract_archive(datasetPath, dataset_dir, archive_format='auto')
     train_model=os.path.join(dataset_dir,"train_model")
     train_skeleton=os.path.join(dataset_dir,"train_skeleton")
@@ -155,9 +180,22 @@ def buildEncoder(model,filters,ishape=0):
     model.add(MaxPooling2D((2, 2), padding='same'))
     return model
 
+def buildEncoder3d(model,filters,ishape=0):
+    if (ishape!=0):
+        model.add(Conv3D(filters, (3, 3, 3), padding='same',input_shape=ishape))
+    else:
+        model.add(Conv3D(filters, (3, 3, 3), padding='same'))
+    model.add(MaxPooling3D((2, 2, 2), padding='same'))
+    return model
+
 def buildDecoder(model,filters):
     model.add(Conv2D(filters, (3, 3), activation='relu', padding='same'))
     model.add(UpSampling2D((2, 2)))
+    return model
+
+def buildDecoder3d(model,filters):
+    model.add(Conv3D(filters, (3, 3, 3), activation='relu', padding='same'))
+    model.add(UpSampling3D(size=(2, 2, 2)))
     return model
     
 def skeleton_model(input_shape):
@@ -211,6 +249,24 @@ def skeleton_model3(input_shape):
     model.summary()
     return model;
 
+def skeleton_model3d(input_shape):
+    ## DEF NN TOPOLOGY  
+    model = Sequential()
+
+    model=buildEncoder3d(model,64, input_shape)
+    model=buildEncoder3d(model,32)
+    model=buildEncoder3d(model,16)
+    model=buildEncoder3d(model,8)
+    #model=buildEncoder(model,8)
+    #model=buildDecoder(model,8)
+    model=buildDecoder3d(model,8)
+    model=buildDecoder3d(model,16)
+    model=buildDecoder3d(model,32)
+    model=buildDecoder3d(model,64)
+    model.add(Conv3D(1, (3, 3, 3), activation='sigmoid', padding='same'))
+    model.compile(optimizer='adadelta', loss='binary_crossentropy')
+    model.summary()
+    return model;
 
 def create_model(input_shape):
     ## DEF NN TOPOLOGY  
@@ -440,6 +496,31 @@ def trainDataGenerator(model, batch_size, epochs, x_train, y_train, x_test, y_te
     model_path = '../test/skeletonmodel.h5'
     model.save(model_path)
     uploadFileToDrive(model_path)
+
+def trainDataGenerator3d(model, batch_size, epochs, x_train, y_train, x_test, y_test):
+    
+    # Parameters
+    params = {'dim': (256,256,1),
+          'batch_size': 64,
+          'n_classes': 6,
+          'n_channels': 1,
+          'shuffle': True}
+    dataSetPath = os.path.join(os.path.expanduser('~'), '.keras/datasets/skeleton3d')
+    # Generators
+    training_generator = DataGenerator3d(dataSetPath, x_train, y_train, **params)
+    validation_generator = DataGenerator3d(dataSetPath, x_test, y_test, **params)
+
+    ## TRAINING
+    model.fit_generator(generator=training_generator,
+          validation_data=validation_generator,
+          epochs=epochs, 
+          verbose=1,
+          shuffle=True,
+          callbacks=[TensorBoard(log_dir='/tmp/skeletonmodel3d',histogram_freq=0,  write_graph=True, write_images=False)])
+    
+    model_path = '../test/skeletonmodel3d.h5'
+    model.save(model_path)
+    uploadFileToDrive(model_path)
         
 def test(x_test):    
     model = load_model('../test/skeletonmodel.h5')
@@ -465,20 +546,34 @@ def main():
     
     print("Init")
     batch_size = 25
-
+    is3d=True
     epochs = 50
-    #https://drive.google.com/open?id=1usvnmumTinLgaRIDGRJHpqNq86GGc1uF
-    downloadDatasetFromDrive("1usvnmumTinLgaRIDGRJHpqNq86GGc1uF","../dataset/skeleton_dataset.tar.gz")
-    
     input_shape = (240, 320, 1)
-    print("Create model")
-    model = skeleton_model3(input_shape)
-    print("Load dataSet")
-    (x_train, y_train), (x_test, y_test) = loadDataSetList("../dataset/skeleton_dataset.tar.gz")
+    if is3d:
+        #https://drive.google.com/open?id=15J9LqafqljNKn_Zzge4ugGpaXuMTIQ9h
+        input_shape = (256, 256, 256, 1)
+        downloadDatasetFromDrive("15J9LqafqljNKn_Zzge4ugGpaXuMTIQ9h","../dataset/skeleton_3ddataset.tar.gz")
+        print("Create model 3d")
+        model = skeleton_model3d(input_shape)
+        print("Load dataSet")
+        (x_train, y_train), (x_test, y_test) = loadDataSetList3d("../dataset/skeleton_3ddataset.tar.gz")
+        print("Train 3d")
+        trainDataGenerator3d(model, batch_size, epochs, x_train, y_train, x_test, y_test)
+        print("End Train 3d")
+    else:
+        input_shape = (240, 320, 1)
+        downloadDatasetFromDrive("1usvnmumTinLgaRIDGRJHpqNq86GGc1uF","../dataset/skeleton_dataset.tar.gz")
+        print("Create model 2d")
+        model = skeleton_model3(input_shape)
+        print("Load dataSet 2d")
+        (x_train, y_train), (x_test, y_test) = loadDataSetList2d("../dataset/skeleton_dataset.tar.gz")
+        print("Train 2d")
+        trainDataGenerator(model, batch_size, epochs, x_train, y_train, x_test, y_test)
+        print("End Train 2d")
     
-    print("Train")
-    trainDataGenerator(model, batch_size, epochs, x_train, y_train, x_test, y_test)
-    print("End Train")
+
+    
+   
     #print("Test")
     #test(x_test)
     #print("End Test")
