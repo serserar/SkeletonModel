@@ -27,6 +27,7 @@ from DataGenerator import DataGenerator
 from DataGenerator3d import DataGenerator3d
 import uuid
 import itertools
+import binvox_rw
 
 def downloadDatasetFromDrive(datasetId, download_dir):
     gauth = GoogleAuth()
@@ -156,9 +157,26 @@ def test3d(x_test, y_test):
     validation_generator = DataGenerator3d(dataSetPath, x_test, y_test, **params)
     #scoreSeg = model.evaluate_generator(validation_generator, len(x_test))
     #print("Accuracy = ",scoreSeg[1])
-    predicted_voxels = model.predict_generator(validation_generator, len(x_test))
-    
-    saveVoxels(predicted_voxels, "../predicted")
+    #predicted_voxels = model.predict_generator(validation_generator, len(x_test))
+    for i in range(len(x_test)):
+        voxels = []
+        voxel_path=os.path.join(dataSetPath, x_test[i])
+        if os.path.exists(voxel_path):
+                try:
+                    with open(voxel_path, 'rb') as voxelFile:
+                        voxel = np.int32(binvox_rw.read_as_3d_array(voxelFile).data)
+                        voxels.append(voxel)
+                except:
+                    print(voxel_path)
+        else:
+            print(voxel_path)
+              
+        Xtest=np.asarray(voxels, dtype='uint8')         
+        predicted_voxels = model.predict(Xtest, batch_size=1)
+        print("predict : " + i)
+        saveVoxels(predicted_voxels, "../predicted")
+        print("saved : " + i)
+        
    
 
     
