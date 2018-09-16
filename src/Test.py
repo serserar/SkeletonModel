@@ -173,9 +173,9 @@ def test3d(x_test, y_test):
               
         Xtest=np.asarray(voxels, dtype='uint8')         
         predicted_voxels = model.predict(Xtest, batch_size=1)
-        print("predict : " + i)
+        print("predict : " + str(i))
         saveVoxels(predicted_voxels, "../predicted")
-        print("saved : " + i)
+        print("saved : " + str(i))
         
    
 
