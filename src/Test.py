@@ -158,6 +158,10 @@ def test3d(x_test, y_test):
     #scoreSeg = model.evaluate_generator(validation_generator, len(x_test))
     #print("Accuracy = ",scoreSeg[1])
     #predicted_voxels = model.predict_generator(validation_generator, len(x_test))
+    predicted_dir = "../predicted"
+    if not os.path.exists(predicted_dir):
+        os.makedirs(predicted_dir)
+        
     for i in range(len(x_test)):
         voxels = []
         voxel_path=os.path.join(dataSetPath, x_test[i])
@@ -174,7 +178,7 @@ def test3d(x_test, y_test):
         Xtest=np.asarray(voxels, dtype='uint8')         
         predicted_voxels = model.predict(Xtest, batch_size=1)
         print("predict : " + str(i))
-        saveVoxels(predicted_voxels, "../predicted")
+        saveVoxels(predicted_voxels, predicted_dir)
         print("saved : " + str(i))
         
    
@@ -192,8 +196,9 @@ def saveVoxels(predicted_voxels, destinationPath):
     for voxel_array in predicted_voxels:
         id = str(uuid.uuid4())
         voxel_path = os.path.join(destinationPath, id + ".binvox")
+        voxel = binvox_rw.Voxels(voxel_array, voxel_array.shape, (0, 0, 0), 1)
         with open(voxel_path, 'wb') as f:
-            voxel_array.write(f)
+            voxel.write(f)
 
     return
     
