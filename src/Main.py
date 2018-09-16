@@ -548,13 +548,13 @@ def main():
     print("Init")
     batch_size = 32
     is3d=True
-    epochs = 5
+    epochs = 3
     input_shape = (240, 320, 1)
     
     if is3d:
-        #https://drive.google.com/open?id=1rCZZJvQMwQf8JMSR_NXRqZGqVP-Y3P-I
+        #https://drive.google.com/open?id=15bRoqX-PVJuWBVBk7bh9xq4lzgx6qiUt
         input_shape = (64, 64, 64, 1)
-        downloadDatasetFromDrive("1rCZZJvQMwQf8JMSR_NXRqZGqVP-Y3P-I","../dataset/skeleton_3ddataset.tar.gz")
+        downloadDatasetFromDrive("15bRoqX-PVJuWBVBk7bh9xq4lzgx6qiUt","../dataset/skeleton_3ddataset.tar.gz")
         print("Create model 3d")
         model = skeleton_model3d(input_shape)
         print("Load dataSet")

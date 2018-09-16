@@ -24,6 +24,7 @@ from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from oauth2client.client import GoogleCredentials
 from DataGenerator import DataGenerator
+from DataGenerator3d import DataGenerator3d
 import uuid
 import itertools
 
@@ -98,7 +99,28 @@ def loadDataSet(datasetPath):
     y_test = y_test.astype('float32') / 255.
     return (x_train, y_train), (x_test, y_test)  
 
-
+def loadDataSetList3d(datasetPath):
+    if os.path.exists(datasetPath):
+        dataset_dir = os.path.join(os.path.expanduser('~'), '.keras/datasets/skeleton3dtest')
+        keras.utils.data_utils._extract_archive(datasetPath, dataset_dir, archive_format='auto')
+    train_model=os.path.join(dataset_dir,"train_model")
+    train_skeleton=os.path.join(dataset_dir,"train_skeleton")
+    x_train=[]
+    y_train=[]
+    if os.path.exists(train_model):
+        with open(train_model) as f:
+            all_x_img_paths = f.read().splitlines()
+            for img_path in all_x_img_paths:
+                x_train.append(img_path)
+    if os.path.exists(train_skeleton):
+        with open(train_skeleton) as f:
+            all_y_img_paths = f.read().splitlines()
+            for img_path in all_y_img_paths:
+                y_train.append(img_path)
+    print("Xtrain size : " + str(len(x_train)))
+    print("Ytrain size : " + str(len(y_train)))
+    x_train, x_test, y_train, y_test = train_test_split(x_train, y_train, shuffle=True, test_size=0.20)
+    return (x_train, y_train), (x_test, y_test)  
         
 def test(x_test, y_test):    
     model = load_model('../test/skeletonmodel_final_2.h5')
@@ -120,7 +142,26 @@ def test(x_test, y_test):
         ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
     plt.show()
+    
+def test3d(x_test, y_test):    
+    model = load_model('../test/skeletonmodel3d.h5')
+    #plotResults(model)
+    dataSetPath = os.path.join(os.path.expanduser('~'), '.keras/datasets/skeleton3dtest')
+    params = {'dim': (64, 64, 64, 1),
+          'batch_size': 32,
+          'n_classes': 6,
+          'n_channels': 1,
+          'shuffle': True}
+    # Generators
+    validation_generator = DataGenerator3d(dataSetPath, x_test, y_test, **params)
+    scoreSeg = model.evaluate_generator(validation_generator, len(x_test))
+    print("Accuracy = ",scoreSeg[1])
+    predicted_voxels = model.predict_generator(validation_generator, len(x_test))
+    
+    saveVoxels(predicted_voxels, "../predicted")
+   
 
+    
 def saveImages(predicted_images, destinationPath):
     for image_array in predicted_images:
         img = array_to_img(image_array)
@@ -129,14 +170,46 @@ def saveImages(predicted_images, destinationPath):
         img.save(imgpath,'ppm')
     return
 
+def saveVoxels(predicted_voxels, destinationPath):
+    for voxel_array in predicted_voxels:
+        id = str(uuid.uuid4())
+        voxel_path = os.path.join(destinationPath, id + ".binvox")
+        with open(voxel_path, 'wb') as f:
+            voxel_array.write(f)
+
+    return
+    
+def plotResults(model):
+    epochs=5
+    loss = model.history['loss']
+    val_loss = model.history['val_loss']
+    epochs = range(epochs)
+    plt.figure()
+    plt.plot(epochs, loss, 'bo', label='Training loss')
+    plt.plot(epochs, val_loss, 'b', label='Validation loss')
+    plt.title('Training and validation loss')
+    plt.legend()
+    plt.show()    
+
 def main():
     
-    print("Init")
-    print("Load dataSet")
-    (x_train, y_train), (x_test, y_test) = loadDataSet("../dataset/skeleton_dataset_test.tar.gz")
-
-    print("Test")
-    test(x_test, y_test)
-    print("End Test")
+    is3d=True
+    if is3d:
+        print("Init 3d")
+        print("Load 3d dataSet")
+        #https://drive.google.com/open?id=1r5MFk3OTCQRLgLneLalaSduLlyEpQ3oK
+        downloadDatasetFromDrive("1r5MFk3OTCQRLgLneLalaSduLlyEpQ3oK","../dataset/skeleton_3ddataset_test.tar.gz")
+        (x_train, y_train), (x_test, y_test) = loadDataSetList3d("../dataset/skeleton_3ddataset_test.tar.gz")
+        print("Test 3d")
+        test3d(x_test, y_test)
+        print("End Test 3d")
+    else:    
+        print("Init 2d")
+        print("Load 2d dataSet")
+        (x_train, y_train), (x_test, y_test) = loadDataSet("../dataset/skeleton_dataset_test.tar.gz")
+        print("Test 2d")
+        test(x_test, y_test)
+        print("End Test 2d")
+        
 if __name__ == '__main__':
     main()
