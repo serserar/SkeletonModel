@@ -154,8 +154,8 @@ def test3d(x_test, y_test):
           'shuffle': True}
     # Generators
     validation_generator = DataGenerator3d(dataSetPath, x_test, y_test, **params)
-    scoreSeg = model.evaluate_generator(validation_generator, len(x_test))
-    print("Accuracy = ",scoreSeg[1])
+    #scoreSeg = model.evaluate_generator(validation_generator, len(x_test))
+    #print("Accuracy = ",scoreSeg[1])
     predicted_voxels = model.predict_generator(validation_generator, len(x_test))
     
     saveVoxels(predicted_voxels, "../predicted")
