@@ -186,6 +186,8 @@ def buildEncoder3d(model,filters,filtersize=3,ishape=0):
         model.add(Conv3D(filters, (filtersize, filtersize, filtersize), padding='same',input_shape=ishape))
     else:
         model.add(Conv3D(filters, (filtersize, filtersize, filtersize), padding='same'))
+    model.add(BN())
+    model.add(GN(0.3))    
     model.add(MaxPooling3D((2, 2, 2), padding='same'))
     return model
 
@@ -284,6 +286,26 @@ def skeleton_model3d01(input_shape):
     model=buildDecoder3d(model,16)
     model=buildDecoder3d(model,32,5)
     model=buildDecoder3d(model,64,7)
+    model.add(Conv3D(1, (3, 3, 3), activation='sigmoid', padding='same'))
+    model.add(Reshape((64, 64, 64), input_shape=(64, 64, 64, 1)))
+    model.compile(optimizer='adadelta', loss='binary_crossentropy')
+    model.summary()
+    return model;
+
+def skeleton_model3d02(input_shape):
+    ## DEF NN TOPOLOGY  
+    model = Sequential()
+    model.add(Reshape((64, 64, 64, 1), input_shape=(64, 64, 64)))
+    #model=buildEncoder3d(model,1, 64)
+    model=buildEncoder3d(model,32,32)
+    model=buildEncoder3d(model,16,16)
+    model=buildEncoder3d(model,128,8)
+    model=buildEncoder3d(model,256,4)
+    model=buildDecoder3d(model,256,4)
+    model=buildDecoder3d(model,128,8)
+    model=buildDecoder3d(model,16,16)
+    model=buildDecoder3d(model,32,32)
+    #model=buildDecoder3d(model,1, 64)
     model.add(Conv3D(1, (3, 3, 3), activation='sigmoid', padding='same'))
     model.add(Reshape((64, 64, 64), input_shape=(64, 64, 64, 1)))
     model.compile(optimizer='adadelta', loss='binary_crossentropy')
@@ -583,7 +605,8 @@ def main():
         downloadDatasetFromDrive("15bRoqX-PVJuWBVBk7bh9xq4lzgx6qiUt","../dataset/skeleton_3ddataset.tar.gz")
         print("Create model 3d")
         #model = skeleton_model3d(input_shape)
-        model = skeleton_model3d01(input_shape)
+        #model = skeleton_model3d01(input_shape)
+        model = skeleton_model3d02(input_shape)
         print("Load dataSet")
         (x_train, y_train), (x_test, y_test) = loadDataSetList3d("../dataset/skeleton_3ddataset.tar.gz")
         print("Train 3d")
