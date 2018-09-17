@@ -4,7 +4,6 @@ import os
 from os import path
 import binvox_rw
 from keras.callbacks import TensorBoard
-from PIL import Image
 
 class DataGenerator3d(keras.utils.Sequence):
     'Generates data for Keras'
@@ -60,13 +59,13 @@ class DataGenerator3d(keras.utils.Sequence):
             if os.path.exists(voxel_path):
                 try:
                     with open(voxel_path, 'rb') as voxelFile:
-                        voxel = np.int32(binvox_rw.read_as_3d_array(voxelFile).data)
+                        voxel = binvox_rw.read_as_3d_array(voxelFile).data.astype(np.float32)
                         voxels.append(voxel)
                 except:
                     print(voxel_path)
             else:
                 print(voxel_path)       
-        X=np.asarray(voxels, dtype='uint8') 
+        X=np.asarray(voxels, np.float) 
          
         yvoxels=[]      
         for id in y_list_tmp:
@@ -74,14 +73,14 @@ class DataGenerator3d(keras.utils.Sequence):
             if os.path.exists(voxel_path):
                 try:
                     with open(voxel_path, 'rb') as voxelFile:
-                        yvoxel = np.int32(binvox_rw.read_as_3d_array(voxelFile).data)
+                        yvoxel = binvox_rw.read_as_3d_array(voxelFile).data.astype(np.float32)
                         yvoxels.append(yvoxel)
                 except:
                     print(voxel_path)
             else:
                 print(voxel_path)
                        
-        Y=np.asarray(yvoxels, dtype='uint8')        
+        Y=np.asarray(yvoxels, np.float)        
 
         return X, Y
     
