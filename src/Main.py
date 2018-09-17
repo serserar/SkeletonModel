@@ -187,7 +187,7 @@ def buildEncoder3d(model,filters,filtersize=3,ishape=0):
     else:
         model.add(Conv3D(filters, (filtersize, filtersize, filtersize), padding='same'))
     model.add(BN())
-    model.add(GN(0.3))    
+    #model.add(GN(0.3))    
     model.add(MaxPooling3D((2, 2, 2), padding='same'))
     return model
 
