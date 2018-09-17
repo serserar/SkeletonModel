@@ -562,7 +562,7 @@ def trainDataGenerator3d(model, batch_size, epochs, x_train, y_train, x_test, y_
           shuffle=True,
           callbacks=[TensorBoard(log_dir='/tmp/skeletonmodel3d',histogram_freq=0,  write_graph=True, write_images=False)])
     
-    model_path = '../test/skeletonmodel3d_01.h5'
+    model_path = '../test/skeletonmodel3d_bg.h5'
     model.save(model_path)
     uploadFileToDrive(model_path)
     history_path = '../test/trainHistory'
@@ -604,9 +604,9 @@ def main():
         input_shape = (64, 64, 64, 1)
         downloadDatasetFromDrive("15bRoqX-PVJuWBVBk7bh9xq4lzgx6qiUt","../dataset/skeleton_3ddataset.tar.gz")
         print("Create model 3d")
-        #model = skeleton_model3d(input_shape)
+        model = skeleton_model3d(input_shape)
         #model = skeleton_model3d01(input_shape)
-        model = skeleton_model3d02(input_shape)
+        #model = skeleton_model3d02(input_shape)
         print("Load dataSet")
         (x_train, y_train), (x_test, y_test) = loadDataSetList3d("../dataset/skeleton_3ddataset.tar.gz")
         print("Train 3d")
