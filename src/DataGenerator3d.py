@@ -65,7 +65,7 @@ class DataGenerator3d(keras.utils.Sequence):
                     print(voxel_path)
             else:
                 print(voxel_path)       
-        X=np.asarray(voxels, np.float) 
+        X=np.asarray(voxels,  dtype='float32') 
          
         yvoxels=[]      
         for id in y_list_tmp:
@@ -80,7 +80,7 @@ class DataGenerator3d(keras.utils.Sequence):
             else:
                 print(voxel_path)
                        
-        Y=np.asarray(yvoxels, np.float)        
+        Y=np.asarray(yvoxels,  dtype='float32')        
 
         return X, Y
     

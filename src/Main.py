@@ -27,6 +27,7 @@ from DataGenerator import DataGenerator
 from DataGenerator3d import DataGenerator3d
 import uuid
 import itertools
+import pickle
 
 def downloadDatasetFromDrive(datasetId, download_dir):
     gauth = GoogleAuth()
@@ -180,11 +181,11 @@ def buildEncoder(model,filters,ishape=0):
     model.add(MaxPooling2D((2, 2), padding='same'))
     return model
 
-def buildEncoder3d(model,filters,ishape=0):
+def buildEncoder3d(model,filters,filtersize=3,ishape=0):
     if (ishape!=0):
-        model.add(Conv3D(filters, (3, 3, 3), padding='same',input_shape=ishape))
+        model.add(Conv3D(filters, (filtersize, filtersize, filtersize), padding='same',input_shape=ishape))
     else:
-        model.add(Conv3D(filters, (3, 3, 3), padding='same'))
+        model.add(Conv3D(filters, (filtersize, filtersize, filtersize), padding='same'))
     model.add(MaxPooling3D((2, 2, 2), padding='same'))
     return model
 
@@ -263,6 +264,26 @@ def skeleton_model3d(input_shape):
     model=buildDecoder3d(model,16)
     model=buildDecoder3d(model,32)
     model=buildDecoder3d(model,64)
+    model.add(Conv3D(1, (3, 3, 3), activation='sigmoid', padding='same'))
+    model.add(Reshape((64, 64, 64), input_shape=(64, 64, 64, 1)))
+    model.compile(optimizer='adadelta', loss='binary_crossentropy')
+    model.summary()
+    return model;
+
+def skeleton_model3d01(input_shape):
+    ## DEF NN TOPOLOGY  
+    model = Sequential()
+    model.add(Reshape((64, 64, 64, 1), input_shape=(64, 64, 64)))
+    model=buildEncoder3d(model,64,7)
+    model=buildEncoder3d(model,32,5)
+    model=buildEncoder3d(model,16)
+    model=buildEncoder3d(model,8)
+    model=buildEncoder(model,8)
+    model=buildDecoder(model,8)
+    model=buildDecoder3d(model,8)
+    model=buildDecoder3d(model,16)
+    model=buildDecoder3d(model,32,5)
+    model=buildDecoder3d(model,64,7)
     model.add(Conv3D(1, (3, 3, 3), activation='sigmoid', padding='same'))
     model.add(Reshape((64, 64, 64), input_shape=(64, 64, 64, 1)))
     model.compile(optimizer='adadelta', loss='binary_crossentropy')
@@ -512,16 +533,21 @@ def trainDataGenerator3d(model, batch_size, epochs, x_train, y_train, x_test, y_
     validation_generator = DataGenerator3d(dataSetPath, x_test, y_test, **params)
 
     ## TRAINING
-    model.fit_generator(generator=training_generator,
+    history= model.fit_generator(generator=training_generator,
           validation_data=validation_generator,
           epochs=epochs, 
           verbose=1,
           shuffle=True,
           callbacks=[TensorBoard(log_dir='/tmp/skeletonmodel3d',histogram_freq=0,  write_graph=True, write_images=False)])
     
-    model_path = '../test/skeletonmodel3d.h5'
+    model_path = '../test/skeletonmodel3d_01.h5'
     model.save(model_path)
     uploadFileToDrive(model_path)
+    history_path = '../test/trainHistory'
+    f = open(history_path, 'wb')
+    pickle.dump(history, f, pickle.HIGHEST_PROTOCOL)
+    f.close()
+    uploadFileToDrive(history_path)
         
 def test(x_test):    
     model = load_model('../test/skeletonmodel.h5')
@@ -556,7 +582,8 @@ def main():
         input_shape = (64, 64, 64, 1)
         downloadDatasetFromDrive("15bRoqX-PVJuWBVBk7bh9xq4lzgx6qiUt","../dataset/skeleton_3ddataset.tar.gz")
         print("Create model 3d")
-        model = skeleton_model3d(input_shape)
+        #model = skeleton_model3d(input_shape)
+        model = skeleton_model3d01(input_shape)
         print("Load dataSet")
         (x_train, y_train), (x_test, y_test) = loadDataSetList3d("../dataset/skeleton_3ddataset.tar.gz")
         print("Train 3d")
