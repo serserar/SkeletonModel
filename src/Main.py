@@ -194,8 +194,8 @@ def buildDecoder(model,filters):
     model.add(UpSampling2D((2, 2)))
     return model
 
-def buildDecoder3d(model,filters):
-    model.add(Conv3D(filters, (3, 3, 3), activation='relu', padding='same'))
+def buildDecoder3d(model,filters, filtersize=3):
+    model.add(Conv3D(filters, (filtersize, filtersize, filtersize), activation='relu', padding='same'))
     model.add(UpSampling3D(size=(2, 2, 2)))
     return model
     
