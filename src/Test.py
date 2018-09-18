@@ -168,14 +168,14 @@ def test3d(x_test, y_test):
         if os.path.exists(voxel_path):
                 try:
                     with open(voxel_path, 'rb') as voxelFile:
-                        voxel = np.int32(binvox_rw.read_as_3d_array(voxelFile).data)
+                        voxel = binvox_rw.read_as_3d_array(voxelFile).data.astype(np.float32)
                         voxels.append(voxel)
                 except:
                     print(voxel_path)
         else:
             print(voxel_path)
               
-        Xtest=np.asarray(voxels, dtype='uint8')         
+        Xtest=np.asarray(voxels, dtype='float32')         
         predicted_voxels = model.predict(Xtest, batch_size=1)
         print("predict : " + str(i))
         saveVoxels(predicted_voxels, predicted_dir)
