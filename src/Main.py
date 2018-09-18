@@ -545,7 +545,7 @@ def trainDataGenerator3d(model, batch_size, epochs, x_train, y_train, x_test, y_
     
     # Parameters
     params = {'dim': (64, 64, 64, 1),
-          'batch_size': 32,
+          'batch_size': 16,
           'n_classes': 6,
           'n_channels': 1,
           'shuffle': True}
