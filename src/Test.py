@@ -145,11 +145,11 @@ def test(x_test, y_test):
     plt.show()
     
 def test3d(x_test, y_test):    
-    model = load_model('../test/skeletonmodel3d.h5')
+    model = load_model('../test/skeletonmodel3d_bg.h5')
     #plotResults(model)
     dataSetPath = os.path.join(os.path.expanduser('~'), '.keras/datasets/skeleton3dtest')
     params = {'dim': (64, 64, 64, 1),
-          'batch_size': 32,
+          'batch_size': 16,
           'n_classes': 6,
           'n_channels': 1,
           'shuffle': True}
