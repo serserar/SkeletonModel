@@ -13,7 +13,7 @@ from keras.layers.convolutional import Convolution2D, MaxPooling2D, UpSampling2D
 from keras.layers.normalization import BatchNormalization
 from keras.optimizers import SGD
 from keras.preprocessing.image import img_to_array
-from keras.callbacks import TensorBoard
+from keras.callbacks import TensorBoard,History
 from PIL import Image
 from sklearn.model_selection import train_test_split
 import numpy as np
@@ -549,20 +549,21 @@ def trainDataGenerator3d(model, batch_size, epochs, x_train, y_train, x_test, y_
           'n_classes': 6,
           'n_channels': 1,
           'shuffle': True}
+    history = History()
     dataSetPath = os.path.join(os.path.expanduser('~'), '.keras/datasets/skeleton3d')
     # Generators
     training_generator = DataGenerator3d(dataSetPath, x_train, y_train, **params)
     validation_generator = DataGenerator3d(dataSetPath, x_test, y_test, **params)
-
+    
     ## TRAINING
-    history= model.fit_generator(generator=training_generator,
+    model.fit_generator(generator=training_generator,
           validation_data=validation_generator,
           epochs=epochs, 
           verbose=1,
           shuffle=True,
-          callbacks=[TensorBoard(log_dir='/tmp/skeletonmodel3d',histogram_freq=0,  write_graph=True, write_images=False)])
+          callbacks=[TensorBoard(log_dir='/tmp/skeletonmodel3d',histogram_freq=0,  write_graph=True, write_images=False), history])
     
-    model_path = '../test/skeletonmodel3d_bg.h5'
+    model_path = '../test/skeletonmodel3d_07.h5'
     model.save(model_path)
     uploadFileToDrive(model_path)
     history_path = '../test/trainHistory'
