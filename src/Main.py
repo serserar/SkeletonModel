@@ -600,15 +600,15 @@ def main():
     input_shape = (240, 320, 1)
     
     if is3d:
-        #https://drive.google.com/open?id=15bRoqX-PVJuWBVBk7bh9xq4lzgx6qiUt
+        #https://drive.google.com/open?id=1m3l4zIELrSB5B73LMNt-rDbQzS2JDSJ7
         input_shape = (64, 64, 64, 1)
-        downloadDatasetFromDrive("15bRoqX-PVJuWBVBk7bh9xq4lzgx6qiUt","../dataset/skeleton_3ddataset.tar.gz")
+        downloadDatasetFromDrive("1m3l4zIELrSB5B73LMNt-rDbQzS2JDSJ7","../dataset/skeleton_3ddataset_07g.tar.gz")
         print("Create model 3d")
         model = skeleton_model3d(input_shape)
         #model = skeleton_model3d01(input_shape)
         #model = skeleton_model3d02(input_shape)
         print("Load dataSet")
-        (x_train, y_train), (x_test, y_test) = loadDataSetList3d("../dataset/skeleton_3ddataset.tar.gz")
+        (x_train, y_train), (x_test, y_test) = loadDataSetList3d("../dataset/skeleton_3ddataset_07g.tar.gz")
         print("Train 3d")
         trainDataGenerator3d(model, batch_size, epochs, x_train, y_train, x_test, y_test)
         print("End Train 3d")
