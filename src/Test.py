@@ -196,7 +196,7 @@ def saveVoxels(predicted_voxels, destinationPath):
     for voxel_array in predicted_voxels:
         id = str(uuid.uuid4())
         voxel_path = os.path.join(destinationPath, id + ".binvox")
-        voxel = binvox_rw.Voxels(voxel_array > 0.001, voxel_array.shape, (0, 0, 0), 1,'xyz')
+        voxel = binvox_rw.Voxels(voxel_array > 0.00001, voxel_array.shape, (0, 0, 0), 1,'xyz')
         with open(voxel_path, 'wb') as f:
             voxel.write(f)
             
