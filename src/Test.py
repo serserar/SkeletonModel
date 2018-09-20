@@ -145,7 +145,7 @@ def test(x_test, y_test):
     plt.show()
     
 def test3d(x_test, y_test):    
-    model = load_model('../test/skeletonmodel3d_bg.h5')
+    model = load_model('../test/skeletonmodel3d_07.h5')
     #plotResults(model)
     dataSetPath = os.path.join(os.path.expanduser('~'), '.keras/datasets/skeleton3dtest')
     params = {'dim': (64, 64, 64, 1),
@@ -196,7 +196,7 @@ def saveVoxels(predicted_voxels, destinationPath):
     for voxel_array in predicted_voxels:
         id = str(uuid.uuid4())
         voxel_path = os.path.join(destinationPath, id + ".binvox")
-        voxel = binvox_rw.Voxels(voxel_array > 0.00001, voxel_array.shape, (0, 0, 0), 1,'xyz')
+        voxel = binvox_rw.Voxels(voxel_array > 0.5, voxel_array.shape, (0, 0, 0), 1,'xyz')
         with open(voxel_path, 'wb') as f:
             voxel.write(f)
             
