@@ -568,7 +568,7 @@ def trainDataGenerator3d(model, batch_size, epochs, x_train, y_train, x_test, y_
     uploadFileToDrive(model_path)
     history_path = '../test/trainHistory'
     f = open(history_path, 'wb')
-    pickle.dump(history, f, pickle.HIGHEST_PROTOCOL)
+    pickle.dump(history.history, f, pickle.HIGHEST_PROTOCOL)
     f.close()
     uploadFileToDrive(history_path)
         
