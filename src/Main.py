@@ -606,7 +606,7 @@ def main():
         input_shape = (size, size, size, 1)
         downloadDatasetFromDrive("1m3l4zIELrSB5B73LMNt-rDbQzS2JDSJ7","../dataset/skeleton_3ddataset_07g.tar.gz")
         print("Create model 3d")
-        model = skeleton_model3d(input_shape, size)
+        model = skeleton_model3d(input_shape, size) 
         print("Load dataSet")
         (x_train, y_train), (x_test, y_test) = loadDataSetList3d("../dataset/skeleton_3ddataset_07g.tar.gz")
         print("Train 3d")
