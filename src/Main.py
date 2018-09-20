@@ -252,10 +252,10 @@ def skeleton_model3(input_shape):
     model.summary()
     return model;
 
-def skeleton_model3d(input_shape):
+def skeleton_model3d(input_shape, size):
     ## DEF NN TOPOLOGY  
     model = Sequential()
-    model.add(Reshape((64, 64, 64, 1), input_shape=(64, 64, 64)))
+    model.add(Reshape((size, size, size, 1), input_shape=(size, size, size)))
     model=buildEncoder3d(model,64)
     model=buildEncoder3d(model,32)
     model=buildEncoder3d(model,16)
@@ -266,8 +266,8 @@ def skeleton_model3d(input_shape):
     model=buildDecoder3d(model,16)
     model=buildDecoder3d(model,32)
     model=buildDecoder3d(model,64)
-    model.add(Conv3D(1, (3, 3, 3), activation='sigmoid', padding='same'))
-    model.add(Reshape((64, 64, 64), input_shape=(64, 64, 64, 1)))
+    model.add(Conv3D(1, (3, 3, 3), activation='relu', padding='same'))
+    model.add(Reshape((size, size, size), input_shape=(size, size, size, 1)))
     model.compile(optimizer='adadelta', loss='binary_crossentropy')
     model.summary()
     return model;
@@ -541,10 +541,10 @@ def trainDataGenerator(model, batch_size, epochs, x_train, y_train, x_test, y_te
     model.save(model_path)
     uploadFileToDrive(model_path)
 
-def trainDataGenerator3d(model, batch_size, epochs, x_train, y_train, x_test, y_test):
+def trainDataGenerator3d(model, batch_size, epochs, size,  x_train, y_train, x_test, y_test):
     
     # Parameters
-    params = {'dim': (64, 64, 64, 1),
+    params = {'dim': (size, size, size, 1),
           'batch_size': 16,
           'n_classes': 6,
           'n_channels': 1,
@@ -597,21 +597,20 @@ def main():
     print("Init")
     batch_size = 32
     is3d=True
-    epochs = 3
+    epochs = 4
+    size=64
     input_shape = (240, 320, 1)
     
     if is3d:
         #https://drive.google.com/open?id=1m3l4zIELrSB5B73LMNt-rDbQzS2JDSJ7
-        input_shape = (64, 64, 64, 1)
+        input_shape = (size, size, size, 1)
         downloadDatasetFromDrive("1m3l4zIELrSB5B73LMNt-rDbQzS2JDSJ7","../dataset/skeleton_3ddataset_07g.tar.gz")
         print("Create model 3d")
-        model = skeleton_model3d(input_shape)
-        #model = skeleton_model3d01(input_shape)
-        #model = skeleton_model3d02(input_shape)
+        model = skeleton_model3d(input_shape, size)
         print("Load dataSet")
         (x_train, y_train), (x_test, y_test) = loadDataSetList3d("../dataset/skeleton_3ddataset_07g.tar.gz")
         print("Train 3d")
-        trainDataGenerator3d(model, batch_size, epochs, x_train, y_train, x_test, y_test)
+        trainDataGenerator3d(model, batch_size, epochs, size, x_train, y_train, x_test, y_test)
         print("End Train 3d")
     else:
         input_shape = (240, 320, 1)
