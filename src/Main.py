@@ -563,7 +563,7 @@ def trainDataGenerator3d(model, batch_size, epochs, size,  x_train, y_train, x_t
           shuffle=True,
           callbacks=[TensorBoard(log_dir='/tmp/skeletonmodel3d',histogram_freq=0,  write_graph=True, write_images=False), history])
     
-    model_path = '../test/skeletonmodel3d_07.h5'
+    model_path = '../test/skeletonmodel3d_32.h5'
     model.save(model_path)
     uploadFileToDrive(model_path)
     history_path = '../test/trainHistory'

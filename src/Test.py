@@ -145,7 +145,7 @@ def test(x_test, y_test):
     plt.show()
     
 def test3d(x_test, y_test):    
-    model = load_model('../test/skeletonmodel3d_07.h5')
+    model = load_model('../test/skeletonmodel3d_32.h5')
     #plotResults(model)
     dataSetPath = os.path.join(os.path.expanduser('~'), '.keras/datasets/skeleton3dtest')
     params = {'dim': (64, 64, 64, 1),
