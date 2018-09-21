@@ -595,9 +595,9 @@ def test(x_test):
 def main():
     
     print("Init")
-    batch_size = 32
+    batch_size = 64
     is3d=True
-    epochs = 4
+    epochs = 20
     size=32
     input_shape = (240, 320, 1)
     
