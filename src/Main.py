@@ -545,8 +545,8 @@ def trainDataGenerator3d(model, batch_size, epochs, size,  x_train, y_train, x_t
     
     # Parameters
     params = {'dim': (size, size, size, 1),
-          'batch_size': 16,
-          'n_classes': 6,
+          'batch_size': batch_size,
+          'n_classes': 2,
           'n_channels': 1,
           'shuffle': True}
     history = History()
@@ -598,17 +598,17 @@ def main():
     batch_size = 32
     is3d=True
     epochs = 4
-    size=64
+    size=32
     input_shape = (240, 320, 1)
     
     if is3d:
-        #https://drive.google.com/open?id=1m3l4zIELrSB5B73LMNt-rDbQzS2JDSJ7
+        #https://drive.google.com/open?id=13bLt-HLfiA8bqggYlLgufD-cNCMqjqYS
         input_shape = (size, size, size, 1)
-        downloadDatasetFromDrive("1m3l4zIELrSB5B73LMNt-rDbQzS2JDSJ7","../dataset/skeleton_3ddataset_07g.tar.gz")
+        downloadDatasetFromDrive("13bLt-HLfiA8bqggYlLgufD-cNCMqjqYS","../dataset/skeleton_3ddataset_32.tar.gz")
         print("Create model 3d")
         model = skeleton_model3d(input_shape, size) 
         print("Load dataSet")
-        (x_train, y_train), (x_test, y_test) = loadDataSetList3d("../dataset/skeleton_3ddataset_07g.tar.gz")
+        (x_train, y_train), (x_test, y_test) = loadDataSetList3d("../dataset/skeleton_3ddataset_32.tar.gz")
         print("Train 3d")
         trainDataGenerator3d(model, batch_size, epochs, size, x_train, y_train, x_test, y_test)
         print("End Train 3d")
