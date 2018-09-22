@@ -19,6 +19,7 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 import os
 from os import path
+from os.path import basename
 import matplotlib.pyplot as plt
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
@@ -181,7 +182,7 @@ def test3d(x_test, y_test):
         Xtest=np.asarray(voxels, dtype='float32')         
         predicted_voxels = model.predict(Xtest, batch_size=1)
         print("predict : " + str(i))
-        saveVoxels(predicted_voxels, predicted_dir, x_test[i], tar)
+        saveVoxels(predicted_voxels, predicted_dir, basename(x_test[i]), tar)
         print("saved : " + str(i))
     
     tar.close()    
