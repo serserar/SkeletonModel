@@ -28,6 +28,7 @@ from DataGenerator3d import DataGenerator3d
 import uuid
 import itertools
 import binvox_rw
+import tarfile
 
 def downloadDatasetFromDrive(datasetId, download_dir):
     gauth = GoogleAuth()
@@ -161,7 +162,9 @@ def test3d(x_test, y_test):
     predicted_dir = "../predicted"
     if not os.path.exists(predicted_dir):
         os.makedirs(predicted_dir)
-        
+    
+    archive_name = "../test/preficted.tar.gz"    
+    tar = tarfile.open(archive_name, "w:gz")    
     for i in range(len(x_test)):
         voxels = []
         voxel_path=os.path.join(dataSetPath, x_test[i])
@@ -178,10 +181,11 @@ def test3d(x_test, y_test):
         Xtest=np.asarray(voxels, dtype='float32')         
         predicted_voxels = model.predict(Xtest, batch_size=1)
         print("predict : " + str(i))
-        saveVoxels(predicted_voxels, predicted_dir)
+        saveVoxels(predicted_voxels, predicted_dir, x_test[i], tar)
         print("saved : " + str(i))
-        
-   
+    
+    tar.close()    
+    uploadFileToDrive(archive_name)
 
     
 def saveImages(predicted_images, destinationPath):
@@ -192,18 +196,18 @@ def saveImages(predicted_images, destinationPath):
         img.save(imgpath,'ppm')
     return
 
-def saveVoxels(predicted_voxels, destinationPath):
+def saveVoxels(predicted_voxels, destinationPath, name, tar):
     for voxel_array in predicted_voxels:
-        id = str(uuid.uuid4())
-        voxel_path = os.path.join(destinationPath, id + ".binvox")
+        voxel_path = os.path.join(destinationPath, name + ".binvox")
         voxel = binvox_rw.Voxels(voxel_array > 0.5, voxel_array.shape, (0, 0, 0), 1,'xyz')
         with open(voxel_path, 'wb') as f:
             voxel.write(f)
             
-        np_path = os.path.join(destinationPath, id + ".npy")    
-        np.save(np_path,  voxel_array) 
-
-    return
+        np_path = os.path.join(destinationPath, name + ".npy")    
+        np.save(np_path,  voxel_array)
+        tar.add(name + ".binvox", voxel_path)
+        tar.add(name + ".npy", np_path) 
+        
     
 def plotResults(model):
     epochs=5
@@ -216,6 +220,14 @@ def plotResults(model):
     plt.title('Training and validation loss')
     plt.legend()
     plt.show()    
+
+def uploadFileToDrive(filePath):
+    gauth = GoogleAuth()
+    gauth.credentials = GoogleCredentials.get_application_default()
+    drive = GoogleDrive(gauth)
+    file1 = drive.CreateFile()
+    file1.SetContentFile(filePath)
+    file1.Upload()
 
 def main():
     
