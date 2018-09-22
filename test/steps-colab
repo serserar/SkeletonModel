@@ -1,0 +1,20 @@
+#1- auth from colab
+from google.colab import auth
+auth.authenticate_user()
+#2-install pydrive
+!pip install -U -q PyDrive
+#3 clone repo
+!git clone https://github.com/serserar/SkeletonModel.git
+#4 change working dir
+%cd /content/SkeletonModel/src/
+#5 execute script
+!python Main.py
+
+#update repo
+%cd /content/SkeletonModel
+!git pull origin master
+#run test
+!python Test.py
+#delete predicted
+!rm -R ../predicted
+

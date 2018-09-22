@@ -1,0 +1,77 @@
+
+
+Using TensorFlow backend.
+Init
+Create model 3d
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+reshape_1 (Reshape)          (None, 64, 64, 64, 1)     0         
+_________________________________________________________________
+conv3d_1 (Conv3D)            (None, 64, 64, 64, 64)    1792      
+_________________________________________________________________
+max_pooling3d_1 (MaxPooling3 (None, 32, 32, 32, 64)    0         
+_________________________________________________________________
+conv3d_2 (Conv3D)            (None, 32, 32, 32, 32)    55328     
+_________________________________________________________________
+max_pooling3d_2 (MaxPooling3 (None, 16, 16, 16, 32)    0         
+_________________________________________________________________
+conv3d_3 (Conv3D)            (None, 16, 16, 16, 16)    13840     
+_________________________________________________________________
+max_pooling3d_3 (MaxPooling3 (None, 8, 8, 8, 16)       0         
+_________________________________________________________________
+conv3d_4 (Conv3D)            (None, 8, 8, 8, 8)        3464      
+_________________________________________________________________
+max_pooling3d_4 (MaxPooling3 (None, 4, 4, 4, 8)        0         
+_________________________________________________________________
+conv3d_5 (Conv3D)            (None, 4, 4, 4, 8)        1736      
+_________________________________________________________________
+up_sampling3d_1 (UpSampling3 (None, 8, 8, 8, 8)        0         
+_________________________________________________________________
+conv3d_6 (Conv3D)            (None, 8, 8, 8, 16)       3472      
+_________________________________________________________________
+up_sampling3d_2 (UpSampling3 (None, 16, 16, 16, 16)    0         
+_________________________________________________________________
+conv3d_7 (Conv3D)            (None, 16, 16, 16, 32)    13856     
+_________________________________________________________________
+up_sampling3d_3 (UpSampling3 (None, 32, 32, 32, 32)    0         
+_________________________________________________________________
+conv3d_8 (Conv3D)            (None, 32, 32, 32, 64)    55360     
+_________________________________________________________________
+up_sampling3d_4 (UpSampling3 (None, 64, 64, 64, 64)    0         
+_________________________________________________________________
+conv3d_9 (Conv3D)            (None, 64, 64, 64, 1)     1729      
+_________________________________________________________________
+reshape_2 (Reshape)          (None, 64, 64, 64)        0         
+=================================================================
+Total params: 150,577
+Trainable params: 150,577
+Non-trainable params: 0
+_________________________________________________________________
+Load dataSet
+Xtrain size : 62388
+Ytrain size : 62388
+Train 3d
+2018-09-15 23:13:34.731853: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:897] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2018-09-15 23:13:34.732368: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1405] Found device 0 with properties: 
+name: Tesla K80 major: 3 minor: 7 memoryClockRate(GHz): 0.8235
+pciBusID: 0000:00:04.0
+totalMemory: 11.17GiB freeMemory: 11.10GiB
+2018-09-15 23:13:34.732412: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1484] Adding visible gpu devices: 0
+2018-09-15 23:13:35.001843: I tensorflow/core/common_runtime/gpu/gpu_device.cc:965] Device interconnect StreamExecutor with strength 1 edge matrix:
+2018-09-15 23:13:35.001904: I tensorflow/core/common_runtime/gpu/gpu_device.cc:971]      0 
+2018-09-15 23:13:35.001937: I tensorflow/core/common_runtime/gpu/gpu_device.cc:984] 0:   N 
+2018-09-15 23:13:35.002244: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1097] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 10759 MB memory) -> physical GPU (device: 0, name: Tesla K80, pci bus id: 0000:00:04.0, compute capability: 3.7)
+Epoch 1/5
+1559/1559 [==============================] - 7125s 5s/step - loss: 0.0537 - val_loss: 0.0530
+Epoch 2/5
+1559/1559 [==============================] - 7111s 5s/step - loss: 0.0526 - val_loss: 0.0529
+Epoch 3/5
+1559/1559 [==============================] - 7107s 5s/step - loss: 0.0526 - val_loss: 0.0529
+Epoch 4/5
+1559/1559 [==============================] - 7106s 5s/step - loss: 0.0526 - val_loss: 0.0530
+Epoch 5/5
+1559/1559 [==============================] - 7118s 5s/step - loss: 0.0526 - val_loss: 0.0530
+End Train 3d
+
+
