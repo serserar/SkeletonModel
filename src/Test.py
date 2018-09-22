@@ -223,9 +223,9 @@ def main():
     if is3d:
         print("Init 3d")
         print("Load 3d dataSet")
-        #https://drive.google.com/open?id=1r5MFk3OTCQRLgLneLalaSduLlyEpQ3oK
-        downloadDatasetFromDrive("1r5MFk3OTCQRLgLneLalaSduLlyEpQ3oK","../dataset/skeleton_3ddataset32.tar.gz")
-        (x_train, y_train), (x_test, y_test) = loadDataSetList3d("../dataset/skeleton_3ddataset32.tar.gz")
+        #https://drive.google.com/open?id=1UsGkRzUKyK_AsTsAa1BfZn06RK8n86zS
+        downloadDatasetFromDrive("1UsGkRzUKyK_AsTsAa1BfZn06RK8n86zS","../dataset/skeleton_3ddataset32test.tar.gz")
+        (x_train, y_train), (x_test, y_test) = loadDataSetList3d("../dataset/skeleton_3ddataset32test.tar.gz")
         print("Test 3d")
         test3d(x_test, y_test)
         print("End Test 3d")
