@@ -182,7 +182,9 @@ def test3d(x_test, y_test):
         Xtest=np.asarray(voxels, dtype='float32')         
         predicted_voxels = model.predict(Xtest, batch_size=1)
         print("predict : " + str(i))
-        saveVoxels(predicted_voxels, predicted_dir, basename(x_test[i]), tar)
+        filename = basename(x_test[i])
+        filename = os.path.splitext(filename)[0]
+        saveVoxels(predicted_voxels, predicted_dir, filename , tar)
         print("saved : " + str(i))
     
     tar.close()    
@@ -206,8 +208,8 @@ def saveVoxels(predicted_voxels, destinationPath, name, tar):
             
         np_path = os.path.join(destinationPath, name + ".npy")    
         np.save(np_path,  voxel_array)
-        tar.add(name + ".binvox", voxel_path)
-        tar.add(name + ".npy", np_path) 
+        tar.add(voxel_path, name + ".binvox")
+        tar.add(np_path, name + ".npy") 
         
     
 def plotResults(model):
