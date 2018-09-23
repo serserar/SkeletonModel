@@ -181,7 +181,7 @@ def test3d(x_test, y_test):
               
         Xtest=np.asarray(voxels, dtype='float32')         
         predicted_voxels = model.predict(Xtest, batch_size=1)
-        print("predict : " + str(i))
+        #print("predict : " + str(i))
         filename = basename(x_test[i])
         filename = os.path.splitext(filename)[0]
         saveVoxels(predicted_voxels, predicted_dir, filename , tar)
