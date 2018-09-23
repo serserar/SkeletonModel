@@ -183,16 +183,19 @@ def buildEncoder(model,filters,ishape=0):
 
 def buildEncoder3d(model,filters,filtersize=3,ishape=0):
     if (ishape!=0):
-        model.add(Conv3D(filters, (filtersize, filtersize, filtersize),activation='relu', padding='same',input_shape=ishape))
+        model.add(Conv3D(filters, (filtersize, filtersize, filtersize), padding='same',input_shape=ishape))
     else:
-        model.add(Conv3D(filters, (filtersize, filtersize, filtersize),activation='relu', padding='same'))
-    #model.add(BN())
-    #model.add(GN(0.3))    
+        model.add(Conv3D(filters, (filtersize, filtersize, filtersize), padding='same'))
+    model.add(BN())
+    model.add(GN(0.3))
+    model.add(Activation('relu'))  
     model.add(MaxPooling3D((2, 2, 2), padding='same'))
     return model
 
 def buildDecoder(model,filters):
-    model.add(Conv2D(filters, (3, 3), activation='relu', padding='same'))
+    model.add(Conv2D(filters, (3, 3), padding='same'))
+    model.add(BN())
+    model.add(Activation('relu'))  
     model.add(UpSampling2D((2, 2)))
     return model
 
@@ -260,8 +263,8 @@ def skeleton_model3d(input_shape, size):
     model=buildEncoder3d(model,32)
     model=buildEncoder3d(model,16)
     model=buildEncoder3d(model,8)
-    #model=buildEncoder3d(model,8)
-    #model=buildDecoder3d(model,8)
+    model=buildEncoder3d(model,8)
+    model=buildDecoder3d(model,8)
     model=buildDecoder3d(model,8)
     model=buildDecoder3d(model,16)
     model=buildDecoder3d(model,32)
@@ -597,7 +600,7 @@ def main():
     print("Init")
     batch_size = 64
     is3d=True
-    epochs = 20
+    epochs = 25
     size=32
     input_shape = (240, 320, 1)
     
