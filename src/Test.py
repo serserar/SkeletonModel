@@ -185,7 +185,7 @@ def test3d(x_test, y_test):
         filename = basename(x_test[i])
         filename = os.path.splitext(filename)[0]
         saveVoxels(predicted_voxels, predicted_dir, filename , tar)
-        print("saved : " + str(i))
+        print("saved : " + filename)
     
     tar.close()    
     uploadFileToDrive(archive_name)

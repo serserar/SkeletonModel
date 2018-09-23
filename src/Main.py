@@ -186,16 +186,16 @@ def buildEncoder3d(model,filters,filtersize=3,ishape=0):
         model.add(Conv3D(filters, (filtersize, filtersize, filtersize), padding='same',input_shape=ishape))
     else:
         model.add(Conv3D(filters, (filtersize, filtersize, filtersize), padding='same'))
-    model.add(BN())
-    model.add(GN(0.3))
+    #model.add(GN(0.3))
     model.add(Activation('relu'))  
+    model.add(BN())
     model.add(MaxPooling3D((2, 2, 2), padding='same'))
     return model
 
 def buildDecoder(model,filters):
     model.add(Conv2D(filters, (3, 3), padding='same'))
-    model.add(BN())
     model.add(Activation('relu'))  
+    model.add(BN())
     model.add(UpSampling2D((2, 2)))
     return model
 
@@ -598,7 +598,7 @@ def test(x_test):
 def main():
     
     print("Init")
-    batch_size = 64
+    batch_size = 128
     is3d=True
     epochs = 25
     size=32
