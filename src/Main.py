@@ -187,8 +187,8 @@ def buildEncoder3d(model,filters,filtersize=3,ishape=0):
     else:
         model.add(Conv3D(filters, (filtersize, filtersize, filtersize), padding='same'))
     #model.add(GN(0.3))
-    model.add(Activation('relu'))  
     model.add(BN())
+    model.add(Activation('relu'))  
     model.add(MaxPooling3D((2, 2, 2), padding='same'))
     return model
 
@@ -200,7 +200,9 @@ def buildDecoder(model,filters):
     return model
 
 def buildDecoder3d(model,filters, filtersize=3):
-    model.add(Conv3D(filters, (filtersize, filtersize, filtersize), activation='relu', padding='same'))
+    model.add(Conv3D(filters, (filtersize, filtersize, filtersize), padding='same'))
+    model.add(BN())
+    model.add(Activation('relu'))  
     model.add(UpSampling3D(size=(2, 2, 2)))
     return model
     
@@ -214,42 +216,6 @@ def skeleton_model(input_shape):
     model=buildDecoder(model,8)
     model=buildDecoder(model,8)
     model=buildDecoder(model,16)
-    model.add(Conv2D(1, (3, 3), activation='sigmoid', padding='same'))
-    model.compile(optimizer='adadelta', loss='binary_crossentropy')
-    model.summary()
-    return model;
-
-def skeleton_model2(input_shape):
-    ## DEF NN TOPOLOGY  
-    model = Sequential()
-
-    model=buildEncoder(model,32, input_shape)
-    model=buildEncoder(model,16)
-    model=buildEncoder(model,8)
-    model=buildEncoder(model,8)
-    model=buildDecoder(model,8)
-    model=buildDecoder(model,8)
-    model=buildDecoder(model,16)
-    model=buildDecoder(model,32)
-    model.add(Conv2D(1, (3, 3), activation='sigmoid', padding='same'))
-    model.compile(optimizer='adadelta', loss='binary_crossentropy')
-    model.summary()
-    return model;
-
-def skeleton_model3(input_shape):
-    ## DEF NN TOPOLOGY  
-    model = Sequential()
-
-    model=buildEncoder(model,64, input_shape)
-    model=buildEncoder(model,32)
-    model=buildEncoder(model,16)
-    model=buildEncoder(model,8)
-    #model=buildEncoder(model,8)
-    #model=buildDecoder(model,8)
-    model=buildDecoder(model,8)
-    model=buildDecoder(model,16)
-    model=buildDecoder(model,32)
-    model=buildDecoder(model,64)
     model.add(Conv2D(1, (3, 3), activation='sigmoid', padding='same'))
     model.compile(optimizer='adadelta', loss='binary_crossentropy')
     model.summary()
@@ -619,7 +585,7 @@ def main():
         input_shape = (240, 320, 1)
         downloadDatasetFromDrive("1usvnmumTinLgaRIDGRJHpqNq86GGc1uF","../dataset/skeleton_dataset.tar.gz")
         print("Create model 2d")
-        model = skeleton_model3(input_shape)
+        model = skeleton_model(input_shape)
         print("Load dataSet 2d")
         (x_train, y_train), (x_test, y_test) = loadDataSetList2d("../dataset/skeleton_dataset.tar.gz")
         print("Train 2d")

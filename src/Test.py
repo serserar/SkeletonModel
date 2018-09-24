@@ -30,6 +30,7 @@ import uuid
 import itertools
 import binvox_rw
 import tarfile
+import pickle
 
 def downloadDatasetFromDrive(datasetId, download_dir):
     gauth = GoogleAuth()
@@ -222,7 +223,45 @@ def plotResults(model):
     plt.plot(epochs, val_loss, 'b', label='Validation loss')
     plt.title('Training and validation loss')
     plt.legend()
-    plt.show()    
+    plt.show()
+    
+def plot_history(history):
+    loss_list = [s for s in history.keys() if 'loss' in s and 'val' not in s]
+    val_loss_list = [s for s in history.keys() if 'loss' in s and 'val' in s]
+    acc_list = [s for s in history.keys() if 'acc' in s and 'val' not in s]
+    val_acc_list = [s for s in history.keys() if 'acc' in s and 'val' in s]
+    
+    if len(loss_list) == 0:
+        print('Loss is missing in history')
+        return 
+    
+    ## As loss always exists
+    epochs = range(1,len(history[loss_list[0]]) + 1)
+    
+    ## Loss
+    plt.figure(1)
+    for l in loss_list:
+        plt.plot(epochs, history[l], 'b', label='Training loss (' + str(str(format(history[l][-1],'.5f'))+')'))
+    for l in val_loss_list:
+        plt.plot(epochs, history[l], 'g', label='Validation loss (' + str(str(format(history[l][-1],'.5f'))+')'))
+    
+    plt.title('Loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend()
+    
+    ## Accuracy
+    plt.figure(2)
+    for l in acc_list:
+        plt.plot(epochs, history.history[l], 'b', label='Training accuracy (' + str(format(history.history[l][-1],'.5f'))+')')
+    for l in val_acc_list:    
+        plt.plot(epochs, history.history[l], 'g', label='Validation accuracy (' + str(format(history.history[l][-1],'.5f'))+')')
+
+    plt.title('Accuracy')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    plt.show()        
 
 def uploadFileToDrive(filePath):
     gauth = GoogleAuth()
@@ -234,7 +273,14 @@ def uploadFileToDrive(filePath):
 
 def main():
     
-    is3d=True
+    is3d=False
+    is2d=False
+    plot = True
+    if plot:
+        with open('../test/trainHistory32', 'rb') as handle:
+            history = pickle.load(handle)
+            plot_history(history)
+        
     if is3d:
         print("Init 3d")
         print("Load 3d dataSet")
@@ -244,13 +290,15 @@ def main():
         print("Test 3d")
         test3d(x_test, y_test)
         print("End Test 3d")
-    else:    
+    elif is2d:    
         print("Init 2d")
         print("Load 2d dataSet")
         (x_train, y_train), (x_test, y_test) = loadDataSet("../dataset/skeleton_dataset_test.tar.gz")
         print("Test 2d")
         test(x_test, y_test)
         print("End Test 2d")
+    
+
         
 if __name__ == '__main__':
     main()
