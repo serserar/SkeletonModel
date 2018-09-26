@@ -253,9 +253,9 @@ def plot_history(history):
     ## Accuracy
     plt.figure(2)
     for l in acc_list:
-        plt.plot(epochs, history.history[l], 'b', label='Training accuracy (' + str(format(history.history[l][-1],'.5f'))+')')
+        plt.plot(epochs, history[l], 'b', label='Training accuracy (' + str(format(history[l][-1],'.5f'))+')')
     for l in val_acc_list:    
-        plt.plot(epochs, history.history[l], 'g', label='Validation accuracy (' + str(format(history.history[l][-1],'.5f'))+')')
+        plt.plot(epochs, history[l], 'g', label='Validation accuracy (' + str(format(history[l][-1],'.5f'))+')')
 
     plt.title('Accuracy')
     plt.xlabel('Epochs')
@@ -273,9 +273,9 @@ def uploadFileToDrive(filePath):
 
 def main():
     
-    is3d=True
+    is3d=False
     is2d=False
-    plot = False
+    plot = True
     if plot:
         with open('../test/trainHistory32', 'rb') as handle:
             history = pickle.load(handle)

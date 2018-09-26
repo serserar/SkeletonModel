@@ -566,6 +566,7 @@ def main():
     print("Init")
     batch_size = 128
     is3d=True
+    continueTrain=True
     epochs = 25
     size=32
     input_shape = (240, 320, 1)
@@ -575,7 +576,11 @@ def main():
         input_shape = (size, size, size, 1)
         downloadDatasetFromDrive("13bLt-HLfiA8bqggYlLgufD-cNCMqjqYS","../dataset/skeleton_3ddataset_32.tar.gz")
         print("Create model 3d")
-        model = skeleton_model3d(input_shape, size) 
+        if continueTrain:
+            model = load_model('../test/skeletonmodel3d_32.h5')
+        else:    
+            model = skeleton_model3d(input_shape, size) 
+        
         print("Load dataSet")
         (x_train, y_train), (x_test, y_test) = loadDataSetList3d("../dataset/skeleton_3ddataset_32.tar.gz")
         print("Train 3d")
