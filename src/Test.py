@@ -273,13 +273,8 @@ def uploadFileToDrive(filePath):
 
 def main():
     
-    is3d=False
+    is3d=True
     is2d=False
-    plot = True
-    if plot:
-        with open('../test/trainHistory32', 'rb') as handle:
-            history = pickle.load(handle)
-            plot_history(history)
         
     if is3d:
         print("Init 3d")
