@@ -229,8 +229,8 @@ def skeleton_model3d(input_shape, size):
     model=buildEncoder3d(model,32)
     model=buildEncoder3d(model,32)
     model=buildEncoder3d(model,16)
-    #model=buildEncoder3d(model,8)
-    #model=buildDecoder3d(model,8)
+    model=buildEncoder3d(model,8)
+    model=buildDecoder3d(model,8)
     model=buildDecoder3d(model,16)
     model=buildDecoder3d(model,32)
     model=buildDecoder3d(model,32)
@@ -567,7 +567,7 @@ def main():
     batch_size = 128
     is3d=True
     continueTrain=False
-    epochs = 25
+    epochs = 20
     size=32
     
     if is3d:
