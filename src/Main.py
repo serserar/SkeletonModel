@@ -227,12 +227,12 @@ def skeleton_model3d(input_shape, size):
     model.add(Reshape((size, size, size, 1), input_shape=(size, size, size)))
     model=buildEncoder3d(model,64)
     model=buildEncoder3d(model,32)
+    model=buildEncoder3d(model,32)
     model=buildEncoder3d(model,16)
-    model=buildEncoder3d(model,8)
-    model=buildEncoder3d(model,8)
-    model=buildDecoder3d(model,8)
-    model=buildDecoder3d(model,8)
+    #model=buildEncoder3d(model,8)
+    #model=buildDecoder3d(model,8)
     model=buildDecoder3d(model,16)
+    model=buildDecoder3d(model,32)
     model=buildDecoder3d(model,32)
     model=buildDecoder3d(model,64)
     model.add(Conv3D(1, (3, 3, 3), activation='relu', padding='same'))
@@ -566,15 +566,14 @@ def main():
     print("Init")
     batch_size = 128
     is3d=True
-    continueTrain=True
+    continueTrain=False
     epochs = 25
     size=32
-    input_shape = (240, 320, 1)
     
     if is3d:
-        #https://drive.google.com/open?id=13bLt-HLfiA8bqggYlLgufD-cNCMqjqYS
+        #https://drive.google.com/open?id=1ta01DUch2sq5qffQLJgfMBqdTv305ENe
         input_shape = (size, size, size, 1)
-        downloadDatasetFromDrive("13bLt-HLfiA8bqggYlLgufD-cNCMqjqYS","../dataset/skeleton_3ddataset_32.tar.gz")
+        downloadDatasetFromDrive("1ta01DUch2sq5qffQLJgfMBqdTv305ENe","../dataset/skeleton_3ddataset_32.tar.gz")
         print("Create model 3d")
         if continueTrain:
             model = load_model('../test/skeletonmodel3d_32.h5')
