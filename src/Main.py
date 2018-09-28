@@ -510,7 +510,7 @@ def trainDataGenerator(model, batch_size, epochs, x_train, y_train, x_test, y_te
     model.save(model_path)
     uploadFileToDrive(model_path)
 
-def trainDataGenerator3d(model, batch_size, epochs, size,  x_train, y_train, x_test, y_test):
+def trainDataGenerator3d(model, batch_size, epochs, initial_epoch, size,  x_train, y_train, x_test, y_test):
     
     # Parameters
     params = {'dim': (size, size, size, 1),
@@ -566,9 +566,10 @@ def main():
     print("Init")
     batch_size = 128
     is3d=True
-    continueTrain=False
+    continueTrain=True
     epochs = 20
     size=32
+    initial_epoch = 0
     
     if is3d:
         #https://drive.google.com/open?id=1ta01DUch2sq5qffQLJgfMBqdTv305ENe
@@ -577,13 +578,14 @@ def main():
         print("Create model 3d")
         if continueTrain:
             model = load_model('../test/skeletonmodel3d_32.h5')
+            initial_epoch = 21
         else:    
             model = skeleton_model3d(input_shape, size) 
         
         print("Load dataSet")
         (x_train, y_train), (x_test, y_test) = loadDataSetList3d("../dataset/skeleton_3ddataset_32.tar.gz")
         print("Train 3d")
-        trainDataGenerator3d(model, batch_size, epochs, size, x_train, y_train, x_test, y_test)
+        trainDataGenerator3d(model, batch_size, epochs, initial_epoch, size, x_train, y_train, x_test, y_test)
         print("End Train 3d")
     else:
         input_shape = (240, 320, 1)
