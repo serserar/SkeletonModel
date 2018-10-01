@@ -194,8 +194,8 @@ def buildEncoder3d(model,filters,filtersize=3,ishape=0):
 
 def buildDecoder(model,filters):
     model.add(Conv2D(filters, (3, 3), padding='same'))
-    model.add(Activation('relu'))  
     model.add(BN())
+    model.add(Activation('relu'))  
     model.add(UpSampling2D((2, 2)))
     return model
 
@@ -579,7 +579,7 @@ def main():
         print("Create model 3d")
         if continueTrain:
             model = load_model('../test/skeletonmodel3d_32.h5')
-            initial_epoch = 20
+            initial_epoch = 40
             epochs+=20
         else:    
             model = skeleton_model3d(input_shape, size) 

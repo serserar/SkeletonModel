@@ -187,7 +187,23 @@ def test3d(x_test, y_test):
         filename = os.path.splitext(filename)[0]
         saveVoxels(predicted_voxels, predicted_dir, filename , tar)
         print("saved : " + filename)
-    
+        print("predict : ")
+        yvoxels = []
+        yvoxel_path=os.path.join(dataSetPath, x_test[i])
+        if os.path.exists(yvoxel_path):
+                try:
+                    with open(yvoxel_path, 'rb') as yvoxelFile:
+                        yvoxel = binvox_rw.read_as_3d_array(yvoxelFile).data.astype(np.float32)
+                        yvoxels.append(yvoxel)
+                except:
+                    print(yvoxel_path)
+        else:
+            print(yvoxel_path)
+              
+        Ytest=np.asarray(yvoxels, dtype='float32')         
+        score = model.evaluate(Xtest, Ytest, verbose=0)
+        print('Test loss:', score)
+        
     tar.close()    
     uploadFileToDrive(archive_name)
 
@@ -280,7 +296,7 @@ def main():
         print("Init 3d")
         print("Load 3d dataSet")
         #https://drive.google.com/open?id=1UsGkRzUKyK_AsTsAa1BfZn06RK8n86zS
-        downloadDatasetFromDrive("1UsGkRzUKyK_AsTsAa1BfZn06RK8n86zS","../dataset/skeleton_3ddataset32test.tar.gz")
+        #downloadDatasetFromDrive("1UsGkRzUKyK_AsTsAa1BfZn06RK8n86zS","../dataset/skeleton_3ddataset32test.tar.gz")
         (x_train, y_train), (x_test, y_test) = loadDataSetList3d("../dataset/skeleton_3ddataset32test.tar.gz")
         print("Test 3d")
         test3d(x_test, y_test)
