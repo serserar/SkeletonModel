@@ -579,7 +579,7 @@ def main():
         print("Create model 3d")
         if continueTrain:
             model = load_model('../test/skeletonmodel3d_32.h5')
-            initial_epoch = 40
+            initial_epoch = 60
             epochs+=initial_epoch
         else:    
             model = skeleton_model3d(input_shape, size) 
