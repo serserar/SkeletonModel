@@ -570,7 +570,7 @@ def main():
     print("Init")
     batch_size = 128
     is3d=True
-    continueTrain=True
+    continueTrain=False
     epochs = 20
     size=32
     initial_epoch = 0
@@ -582,7 +582,7 @@ def main():
         print("Create model 3d")
         if continueTrain:
             model = load_model('../test/skeletonmodel3d_32.h5')
-            initial_epoch = 60
+            initial_epoch = 20
             epochs+=initial_epoch
         else:    
             model = skeleton_model3d(input_shape, size) 
