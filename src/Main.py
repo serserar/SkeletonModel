@@ -239,8 +239,8 @@ def skeleton_model3d(input_shape, size):
     model=buildDecoder3d(model,64)
     model.add(Conv3D(1, (3, 3, 3), activation='relu', padding='same'))
     model.add(Reshape((size, size, size), input_shape=(size, size, size, 1)))
-    #model.compile(optimizer='adadelta', loss='binary_crossentropy')
-    model.compile(optimizer='adadelta', loss='mean_squared_error')
+    model.compile(optimizer='adadelta', loss='binary_crossentropy')
+    #model.compile(optimizer='adadelta', loss='mean_squared_error')
     model.summary()
     return model;
 
