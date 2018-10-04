@@ -188,7 +188,7 @@ def buildEncoder3d(model,filters,filtersize=3,ishape=0):
         model.add(Conv3D(filters, (filtersize, filtersize, filtersize), padding='same'))
     #model.add(GN(0.3))
     #model.add(BN())
-    model.add(Dropout(0.2))
+    model.add(Dropout(0.3))
     model.add(Activation('relu'))  
     model.add(MaxPooling3D((2, 2, 2), padding='same'))
     return model
@@ -203,7 +203,7 @@ def buildDecoder(model,filters):
 def buildDecoder3d(model,filters, filtersize=3):
     model.add(Conv3D(filters, (filtersize, filtersize, filtersize), padding='same'))
     #model.add(BN())
-    model.add(Dropout(0.2))
+    model.add(Dropout(0.3))
     model.add(Activation('relu'))  
     model.add(UpSampling3D(size=(2, 2, 2)))
     return model
