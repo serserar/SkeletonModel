@@ -570,7 +570,7 @@ def main():
     print("Init")
     batch_size = 128
     is3d=True
-    continueTrain=False
+    continueTrain=True
     epochs = 20
     size=32
     initial_epoch = 0
